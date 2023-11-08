@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+
 const App = () => {
   const [todos, setTodos] = useState([]);
-  const [completed, setCompleted] = useState(false);
+  const [newTodo, setNewTodo] = useState("");
 
   const addTodo = (text) => {
     if (!text) {
@@ -9,27 +10,45 @@ const App = () => {
     }
     setTodos((prevTodos) => [
       ...prevTodos,
-      { id: Date.now(), text}
+      { id: Date.now(), text, completed: false },
     ]);
+    setNewTodo("");
   };
 
-  const taskStatus = () => {
-    setCompleted(true)
+  const toggleTodoCompletion = (id) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, completed: !todo.completed };
+        }
+        return todo;
+      })
+    );
   };
 
   const deleteTodo = (id) => {
     setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-
   };
 
   const todoCards = todos.map((todo) => {
+    const { id, text, completed } = todo;
+    const statusButtonClass = completed ? "btn btn-outline-success" : "btn btn-outline-danger";
+    const statusButtonText = completed ? "Completed" : "Pending";
+
     return (
-      <tr key={todo.id}>
-        <th scope="row">{`${todo.id}`}</th>
-        <td>{`${todo.text}`}</td>
-        {(completed === false) &&<td> <button className={`${completed}` && "btn btn-outline-danger"} onClick={()=>taskStatus()}>pending</button></td>}
-        {(completed === true) &&<td> <button className={`${completed}` && "btn btn-outline-success"} onClick={()=>taskStatus()}>Completed</button></td>}
-        <td><button onClick={()=>deleteTodo(todo.id)} className="btn btn-outline-light">deleteTodo</button></td>
+      <tr key={id}>
+        <th scope="row">{id}</th>
+        <td>{text}</td>
+        <td>
+          <button className={statusButtonClass} onClick={() => toggleTodoCompletion(id)}>
+            {statusButtonText}
+          </button>
+        </td>
+        <td>
+          <button className="btn btn-outline-light" onClick={() => deleteTodo(id)}>
+            Delete
+          </button>
+        </td>
       </tr>
     );
   });
@@ -38,35 +57,29 @@ const App = () => {
     <>
       <div className="App">
         <h1 className="d-flex justify-content-center">Todo List</h1>
-        <form className="d-flex justify-content-center"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const text = e.target.elements.newTodo.value.trim();
-            addTodo(text);
-            e.target.elements.newTodo.value = "";
-          }}
-        >
-          <input type="text" class="form-control mx-3" style={{width: "300px", display: "inline-flex"}} name="newTodo" placeholder="Enter a new todo" />
-          <button type="submit" onClick={addTodo()} className="btn btn-outline-dark mx-3">Add Todo</button>
+        <form className="d-flex justify-content-center" onSubmit={(e) => {
+          e.preventDefault();
+          addTodo(newTodo);
+        }}>
+          <input type="text" className="form-control mx-3" style={{ width: "300px", display: "inline-flex" }} name="newTodo" placeholder="Enter a new todo" value={newTodo} onChange={(e) => setNewTodo(e.target.value)} />
+          <button type="submit" onClick={() => addTodo(newTodo)} className="btn btn-outline-dark mx-3">Add Todo</button>
         </form>
       </div>
 
       <div className="container my-3">
         <div className="row">
-      <table className="table table-dark table-striped">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Note</th>
-            <th scope="col">Status</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {todoCards}
-        </tbody>
-      </table>
-      </div>
+          <table className="table table-dark table-striped">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Note</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>{todoCards}</tbody>
+          </table>
+        </div>
       </div>
     </>
   );
