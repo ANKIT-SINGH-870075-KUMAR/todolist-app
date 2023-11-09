@@ -7,6 +7,16 @@
   pointer-events: none;
 }
 
+.tableContainer{
+  overflow: hidden;
+}
+
+@media screen and (max-width: 600px) {
+  .tableContainer{
+    overflow: scroll;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

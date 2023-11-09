@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./App.css";
 
 const App = () => {
   const [todos, setTodos] = useState([]);
@@ -67,7 +68,7 @@ const App = () => {
       </div>
 
       <div className="container my-3">
-        <div className="row">
+        <div className="row tableContainer">
           <table className="table table-dark table-striped">
             <thead>
               <tr>
